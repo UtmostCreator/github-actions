@@ -1,0 +1,7 @@
+name: lint src folder
+on: [push, workflow_dispatch]
+jobs:
+  lint-src:
+    runs-on: ubuntu-latest
+    steps:
+      run: npm lint
