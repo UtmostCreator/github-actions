@@ -4,10 +4,15 @@ on:
   pull_request:
     types: [opened, synchronize]
   workflow_dispatch:
-
+  push:
 jobs:
-  # these jobs run in parallell
+  # these jobs run in parallell(if no 'needs' is specified)
+  lint-src:
+    runs-on: ubuntu-latest
+    steps:
+      run: npm lint
   test:
+    needs: [lint-src]
     runs-on: ubuntu-latest
     steps:
       - name: get code
@@ -35,5 +40,4 @@ jobs:
       - name: build project
         run: npm run build
       - name: Deploy project
-        run: echo "Deployment process is in progress..."
-    
+        run: echo "Deployment process is in progress..."    
