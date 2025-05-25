@@ -3,6 +3,8 @@ name: Testing Project
 on:
   pull_request:
     types: [opened, synchronize]
+  workflow_dispatch:
+
 jobs:
   # these jobs run in parallell
   test:
