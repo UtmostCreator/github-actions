@@ -7,7 +7,7 @@ on:
   push:
 jobs:
   # these jobs run in parallell(if no 'needs' is specified)
-  prepa-project:
+  lint-src:
     runs-on: ubuntu-latest
     steps:
       - name: get code
@@ -16,16 +16,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-  lint-src:
-    needs: [prepa-project]
-    runs-on: ubuntu-latest
-    steps:
       - name: run code formatting test
         run: npm run lint
   test:
     needs: [lint-src]
     runs-on: ubuntu-latest
     steps:
+      - name: get code
+        uses: actions/checkout@v4
+      - name: setup-up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: install dependencies
         run: npm ci
       - name: run test
