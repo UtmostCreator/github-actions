@@ -1,0 +1,15 @@
+name: Setup Node Project
+description: Checkout code, setup Node, install dependencies
+runs:
+  # This action is made up of multiple regular steps, written in plain YAML, and it can be reused across workflows.
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Install dependencies
+      run: npm ci
+      shell: bash

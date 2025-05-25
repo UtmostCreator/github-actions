@@ -1,40 +1,33 @@
 name: Testing Project
-# event
+
 on:
   pull_request:
     types: [opened, synchronize]
-  workflow_dispatch:
   push:
+  workflow_dispatch:
+
 jobs:
-  # these jobs run in parallell(if no 'needs' is specified)
   test-code-and-formatting:
     runs-on: ubuntu-latest
     steps:
-      - name: get code
-        uses: actions/checkout@v4
-      - name: setup-up node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: install dependencies
-        run: npm ci
-      - name: run code formatting test
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Run Lint
         run: npm run lint
-      - name: run test
+      - name: Run Tests
         run: npm test
+
   deploy:
-    needs: [test-code-and-formatting]
+    needs: test-code-and-formatting
     runs-on: ubuntu-latest
     steps:
-      - name: get code
-        uses: actions/checkout@v4
-      - name: setup-up node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: install dependencies
-        run: npm ci
-      - name: build project
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required again!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Build Project
         run: npm run build
-      - name: Deploy project
-        run: echo "Deployment process is in progress..."    
+      - name: Deploy
+        run: echo "Deployment process is in progress..."
