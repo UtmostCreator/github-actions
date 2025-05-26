@@ -1,0 +1,31 @@
+name: Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - 'dev/*'
+      - 'fix/*'   # / are no allwoed with single '*'
+      - 'feat/**' # will allow /
+    paths:
+      - '**.js'
+      - '**.jsx'
+      - '**.css'
+      - '**.json'
+    paths-ignore:
+      - '.github/workflows/*'
+  workflow_dispatch:
+
+jobs:
+  test-code-and-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Run Lint
+        run: npm run lint
+      - name: Run Tests
+        run: npm test
