@@ -13,8 +13,6 @@ on:
       - '**.jsx'
       - '**.css'
       - '**.json'
-    paths-ignore:
-      - '.github/workflows/*'
   workflow_dispatch:
 
 jobs:
