@@ -2,7 +2,8 @@ name: Issues opened
 
 on:
   issues:
-    types: [opened]
+    types:
+      - opened
 
 jobs:
   print-info:
