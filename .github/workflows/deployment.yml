@@ -24,6 +24,8 @@ jobs:
   build:
     needs: test-code-and-formatting
     runs-on: ubuntu-latest
+    # results of this job using outputs:
+    outputs: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4  # 🔥 Required again!
@@ -32,8 +34,10 @@ jobs:
       - name: Build Project
         run: npm run build
       - name: Publish JS file name from build
-        run: find dist/assets/*.js -type f -execdir echo '{}' ';' # finds and prints JS file's name e.g. output example: "./index.e16c65c9.js"
+        id: publish  # used in $ {{ steps }} - mandatory
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';' # finds and prints JS file's name e.g. output example: "./index.e16c65c9.js"
         # ';': Mandatory terminator for the -execdir clause. It tells find where the command ends.
+        # $GITHUB_OUTPUT - managed by github
       # working with artifacts
       - name: Upload artificats
         uses: actions/upload-artifact@v4
