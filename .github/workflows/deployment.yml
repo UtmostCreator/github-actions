@@ -31,3 +31,11 @@ jobs:
         run: npm run build
       - name: Deploy
         run: echo "Deployment process is in progress..."
+      # working with artifacts
+      - name: Upload artificats
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: |
+            dist
+            package.json
