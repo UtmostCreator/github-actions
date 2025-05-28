@@ -3,6 +3,7 @@ name: Deploying Project
 on:
   push:
     branches:
+      - master
       - main
   workflow_dispatch:
 
