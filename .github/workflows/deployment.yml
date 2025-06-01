@@ -25,6 +25,7 @@ jobs:
         uses: ./.github/actions/setup-node-project
       - name: Run Lint
         run: npm run lint
+        # npm start & - starts the server in the background, frees the shell.; w/o ampersand(&) shell will be stack in foreground
       - name: Run server & Wait Server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run Vite Tests
