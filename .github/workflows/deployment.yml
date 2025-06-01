@@ -6,10 +6,17 @@ on:
       - master
       - main
   workflow_dispatch:
-
+env:
+  MONGODB_DB_NAME: test-db-name
 # each job is executed on a different VM/machine so job-1 doesnt have access to job-2 or visa-versa
 jobs:
-  test-code-and-formatting:
+  test:
+    # accessible within only this job
+    env: 
+      MONGODB_CLUSTER_ADDRESS: cluster0.drpgi23.mongodb.net
+      MONGODB_USERNAME: uc
+      MONGODB_PASSWORD: oWwUejDMzjLBFrQp
+      PORT: 8080
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -18,11 +25,18 @@ jobs:
         uses: ./.github/actions/setup-node-project
       - name: Run Lint
         run: npm run lint
+      - name: Run server
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run Tests
         run: npm test
+      - name: Run Playwright test
+        run: npm p-test
+      - name: Print Info
+        run: | 
+          echo "MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}"
 
   build:
-    needs: test-code-and-formatting
+    needs: test
     runs-on: ubuntu-latest
     # results of this job using outputs:
     outputs: 
