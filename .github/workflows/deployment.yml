@@ -26,11 +26,13 @@ jobs:
       - name: Run Lint
         run: npm run lint
       - name: Run server
-        run: npm start & npx wait-on http://127.0.0.1:$PORT
-      - name: Run Tests
-        run: npm test
-      - name: Run Playwright test
-        run: npm p-test
+        run: npm start
+      - name: Wait Server
+        run: npx wait-on http://127.0.0.1:$PORT
+      - name: Run Vite Tests
+        run: npm run test:vitest
+      - name: Run Playwright Tests
+        run: npm run test:playwright
       - name: Print Info
         run: | 
           echo "MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}"
