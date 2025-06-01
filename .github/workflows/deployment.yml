@@ -13,9 +13,9 @@ jobs:
   test:
     # accessible within only this job
     env: 
-      MONGODB_CLUSTER_ADDRESS: cluster0.drpgi23.mongodb.net
-      MONGODB_USERNAME: uc
-      MONGODB_PASSWORD: oWwUejDMzjLBFrQp
+      MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
+      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
     runs-on: ubuntu-latest
     steps:
@@ -33,6 +33,7 @@ jobs:
       - name: Run Playwright Tests
         run: npm run test:playwright
       - name: Print Info
+        # secrets are hidden in such contexts
         run: | 
           echo "MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}"
 
