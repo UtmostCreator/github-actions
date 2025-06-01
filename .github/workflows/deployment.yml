@@ -25,10 +25,8 @@ jobs:
         uses: ./.github/actions/setup-node-project
       - name: Run Lint
         run: npm run lint
-      - name: Run server
-        run: npm start
-      - name: Wait Server
-        run: npx wait-on http://127.0.0.1:$PORT
+      - name: Run server & Wait Server
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run Vite Tests
         run: npm run test:vitest
       - name: Run Playwright Tests
