@@ -11,6 +11,8 @@ env:
 # each job is executed on a different VM/machine so job-1 doesnt have access to job-2 or visa-versa
 jobs:
   test:
+    # chosing env created within you GitHub UI repo(in the settings menu)
+    environment: Testing
     # accessible within only this job
     env: 
       MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
