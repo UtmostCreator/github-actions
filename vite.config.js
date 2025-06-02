@@ -8,10 +8,15 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
     // Add these exclude patterns:
-    exclude: [
-      '**/node_modules/**',
-      '**/tests/**',  // Exclude Playwright tests
-      '**/dist/**'    // exc to run test from production env
-    ]
+    include: [
+      'src/**/*.test.{js,jsx,ts,tsx}'
+    ],
+    reporters: ['default', 'json'],
+    outputFile: {
+      json: './test.json'
+    }
+    // or 
+    // reporters: ['json', 'default'],
+    // outputFile: './test-output.json'
   }
 });
