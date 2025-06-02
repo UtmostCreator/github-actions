@@ -10,6 +10,15 @@ env:
   MONGODB_DB_NAME: test-db-name
 # each job is executed on a different VM/machine so job-1 doesnt have access to job-2 or visa-versa
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Run Lint
+        run: npm run lint
   test:
     # chosing env created within you GitHub UI repo(in the settings menu)
     environment: Testing
@@ -25,8 +34,6 @@ jobs:
         uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
-      - name: Run Lint
-        run: npm run lint
         # npm start & - starts the server in the background, frees the shell.; w/o ampersand(&) shell will be stack in foreground
       - name: Run server & Wait Server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
@@ -95,6 +102,7 @@ jobs:
         run: echo "Deployment process is in progress..."
 
   report:
+    needs: [lint, deploy]
     if: failure()
     runs-on: ubuntu-latest
     steps:
