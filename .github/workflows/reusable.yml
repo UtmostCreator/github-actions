@@ -6,6 +6,13 @@ on:
       script-file:
         required: true
         type: string
+        description: The index file of your project
+      dist-name:
+        required: true
+        type: string
+        default: dist
+        description: build files of your project
+
 jobs:
     deploy:
         runs-on: ubuntu-latest
@@ -13,11 +20,12 @@ jobs:
           - name: Get build artifacts
             uses: actions/download-artifact@v4
             with:
-              name: dist-files # downloading
+              name: ${{ inputs.dist-name }} # downloading file by specified named stored before
           - name: Output contents
             run: ls -la
           - name: Output filename
-            run: echo "${{ needs.build.outputs.script-file }}"
+            run: > # or |
+              echo "Script file: ${{ inputs.script-file }}"
           - name: Deploy
             run: echo "Deployment process is in progress..."
           - name: Info Output

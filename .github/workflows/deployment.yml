@@ -92,6 +92,7 @@ jobs:
     # passes data to the execution workflow
     with:
       script-file: ${{ needs.build.outputs.script-file }}
+      dist-name: dist-files
 
   report:
     needs: [lint, deploy]
