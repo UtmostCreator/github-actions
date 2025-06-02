@@ -93,3 +93,13 @@ jobs:
         run: echo "${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deployment process is in progress..."
+
+  report:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: output Info
+        run: |
+          echo "e.g. your error happens here"
+          echo "${{ github }}"
+
