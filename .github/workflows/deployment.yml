@@ -109,5 +109,5 @@ jobs:
       - name: output Info
         run: |
           echo "e.g. your error happens here"
-          echo "${{ github }}"
+          echo "${{ toJson(github) }}"
 
