@@ -35,7 +35,8 @@ jobs:
         run: npm run test:vitest
       - name: Upload Test Results
         # outcome can be success/failure/cancelled/skipped
-        if: steps.run-vitest.outcome == 'failure'
+        # failure() - true when previous job/step fails/always()/success()/cancelled() - if workflow has been cancelled
+        if: failure() && steps.run-vitest.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: test-report
