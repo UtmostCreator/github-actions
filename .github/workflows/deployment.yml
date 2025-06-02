@@ -93,6 +93,14 @@ jobs:
     with:
       script-file: ${{ needs.build.outputs.script-file }}
       dist-name: dist-files
+    # secrets:
+      # your-secret: ${{ secrets.GITHUB_TOKEN }}
+  print-deploy-output-result:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Results
+        run: echo "${{ needs.deploy.outputs.result }}" # we reference reusable.yml file and its outputs.result value which was returned to deploy job.
 
   report:
     needs: [lint, deploy]

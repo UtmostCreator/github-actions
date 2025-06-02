@@ -12,9 +12,18 @@ on:
         type: string
         default: dist
         description: build files of your project
+    # secrets:
+    #   your-secret:
+    #     required: true
+    outputs:
+      result:
+        description: The result of your deploy operations
+        value: ${{ jobs.deploy.outputs.outcome }}
 
 jobs:
     deploy:
+        outputs:
+          outcome: ${{ steps.set-result.outputs.step-result }}
         runs-on: ubuntu-latest
         steps:
           - name: Get build artifacts
@@ -30,4 +39,7 @@ jobs:
             run: echo "Deployment process is in progress..."
           - name: Info Output
             run: echo "${{toJson(github)}}"
+          - name: Set result output
+            id: set-result
+            run: echo "::set-output name=step-result::success" # 'step-result={}' is '::set-ouput name=step-result::{}'
               
