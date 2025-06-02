@@ -31,8 +31,11 @@ jobs:
       - name: Run server & Wait Server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run Vite Tests
+        id: run-vitest
         run: npm run test:vitest
       - name: Upload Test Results
+        # outcome can be success/failure/cancelled/skipped
+        if: steps.run-vitest.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: test-report
