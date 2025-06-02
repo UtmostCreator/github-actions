@@ -1,0 +1,113 @@
+name: Deploying Project
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+env:
+  MONGODB_DB_NAME: test-db-name
+# each job is executed on a different VM/machine so job-1 doesnt have access to job-2 or visa-versa
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Run Lint
+        run: npm run lint
+  test:
+    # chosing env created within you GitHub UI repo(in the settings menu)
+    environment: Testing
+    # accessible within only this job
+    env: 
+      MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
+      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      PORT: 8080
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+        # npm start & - starts the server in the background, frees the shell.; w/o ampersand(&) shell will be stack in foreground
+      - name: Run server & Wait Server
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
+      - name: Run Vite Tests
+        continue-on-error: true
+        id: run-vitest
+        run: npm run test:vitest
+      - name: Upload Test Results
+        # outcome can be success/failure/cancelled/skipped
+        # failure() - true when previous job/step fails/always()/success()/cancelled() - if workflow has been cancelled
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
+        # Playwright requries server to be running before it can run tests correctly.
+      - name: Run Playwright Tests
+        run: npm run test:playwright
+      - name: Print Info
+        # secrets are hidden in such contexts
+        run: | 
+          echo "MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}"
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    # results of this job using outputs:
+    outputs: 
+      script-file: ${{ steps.publish.outputs.script-file }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 🔥 Required again!
+      - name: Setup Project
+        uses: ./.github/actions/setup-node-project
+      - name: Build Project
+        run: npm run build
+      - name: Publish JS file name from build
+        id: publish  # used in $ {{ steps }} - mandatory
+        # alternative syntax to 'script-file={}' is '::set-ouput name=script-file::{}'
+        run: |
+          echo "script-file=$(find dist/assets/*.js -type f)" >> "$GITHUB_OUTPUT" 
+        # finds and prints JS file's name e.g. output example: "./index.e16c65c9.js"
+        # ';': Mandatory terminator for the -execdir clause. It tells find where the command ends.
+        # $GITHUB_OUTPUT - managed by github
+      # working with artifacts
+      - name: Upload artificats
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files # uploading
+          path: |
+            dist
+            package.json
+# package.json added just as an example
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files # downloading
+      - name: Output contents
+        run: ls -la
+      - name: Output filename
+        run: echo "${{ needs.build.outputs.script-file }}"
+      - name: Deploy
+        run: echo "Deployment process is in progress..."
+
+  report:
+    needs: [lint, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: output Info
+        run: |
+          echo "e.g. your error happens here"
+          echo "${{ toJson(github) }}"
+
