@@ -1,10 +1,17 @@
 # actions are used in steps
-name: Setup Node Project
-description: Checkout code, setup Node, install dependencies
+name: Setup Node Project & Cache
+description: Checkout code, setup Node, install dependencies & Cache
+inputs:
+  caching:
+    description: "Whether to cache deps or not"
+    required: true
+    default: "true"
 runs:
   # This action is made up of multiple regular steps, written in plain YAML, and it can be reused across workflows.
   using: "composite"
   steps:
+    # checkout can be omissed if it is used online for this repo
+    # must be prest if a separate reusable repo
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Setup Node.js
@@ -13,6 +20,7 @@ runs:
         node-version: 20
     # better way to cache node_modules folder
     - name: Cache dependencies
+      if: inputs.caching == 'true'
       uses: actions/cache@v4
       id: cache
       with:
@@ -20,7 +28,7 @@ runs:
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # e.g. id
     - name: Install dependencies
       # bools converted to string value
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
       run: npm ci
       shell: bash
     # - name: Cache dependencies

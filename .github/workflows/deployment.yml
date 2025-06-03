@@ -19,6 +19,8 @@ jobs:
         uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
+        with:
+          caching: 'true'
       - name: Run Lint
         run: npm run lint
   test:
@@ -36,6 +38,8 @@ jobs:
         uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
+        with:
+          caching: 'true'
         # npm start & - starts the server in the background, frees the shell.; w/o ampersand(&) shell will be stack in foreground
       - name: Run server & Wait Server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
@@ -69,6 +73,8 @@ jobs:
         uses: actions/checkout@v4  # 🔥 Required again!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
+        with:
+          caching: 'true'
       - name: Build Project
         run: npm run build
       - name: Publish JS file name from build

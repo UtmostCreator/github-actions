@@ -23,6 +23,8 @@ jobs:
         uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
+        with:
+          caching: 'true'
       - name: Run Lint
         run: npm run lint
       - name: Run Tests
