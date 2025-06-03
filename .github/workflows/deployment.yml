@@ -72,9 +72,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4  # 🔥 Required again!
       - name: Setup Project
+        id: prj-setup
         uses: ./.github/actions/setup-node-project
         with:
           caching: 'true'
+      - name: Print DateTime When it was cached
+        run: echo "Cached at ${{ steps.prj-setup.outputs.executed-at }}"
       - name: Build Project
         run: npm run build
       - name: Publish JS file name from build

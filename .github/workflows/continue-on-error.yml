@@ -16,9 +16,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
       - name: Setup Project
+        id: prj-setup
         uses: ./.github/actions/setup-node-project
         with:
           caching: 'true'
+      - name: Print DateTime When it was cached
+        run: echo "Cached at ${{ steps.prj-setup.outputs.executed-at }}"
       - name: Run Lint
         run: npm run lint
   test:

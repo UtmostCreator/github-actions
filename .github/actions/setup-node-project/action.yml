@@ -6,6 +6,10 @@ inputs:
     description: "Whether to cache deps or not"
     required: true
     default: "true"
+outputs:
+  executed-at:
+    description: Logs when step was executed
+    value: ${{ steps.timestamp.outputs.executed-at }}
 runs:
   # This action is made up of multiple regular steps, written in plain YAML, and it can be reused across workflows.
   using: "composite"
@@ -29,7 +33,10 @@ runs:
     - name: Install dependencies
       # bools converted to string value
       if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-      run: npm ci
+      id: timestamp
+      run: |
+        npm ci
+        echo "executed-at=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
       shell: bash
     # - name: Cache dependencies
     #   uses: actions/cache@v4
