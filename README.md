@@ -19,3 +19,14 @@ https://raw.githubusercontent.com/UtmostCreator/github-actions/refs/heads/master
 | Control Step or Job execution with `if` expressions    | Run multiple Job configurations in parallel              | Workflows can be reused via the `workflow_call` event |
 | Use `failure()`, `success()`, `cancelled()`, `always()`| Add or remove individual combinations                    | Reuse any logic (Jobs & Steps) as needed             |
 | Use `continue-on-error` to ignore step failure         | Control job cancellation with `continue-on-error`        | Work with inputs, outputs, and secrets as required   |
+
+
+Workflows that would otherwise be triggered using `on: push` or `on: pull_request` won't be triggered if you add any of the following strings to the commit message in a push, or the HEAD commit of a pull request:
+
+```bash
+[skip ci]
+[ci skip]
+[no ci]
+[skip actions]
+[actions skip]
+```
