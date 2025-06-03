@@ -32,7 +32,7 @@ runs:
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # e.g. id
     - name: Install dependencies
       # bools converted to string value
-      if: inputs.caching != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
       id: timestamp
       run: |
         npm ci
