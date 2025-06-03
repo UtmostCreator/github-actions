@@ -122,4 +122,11 @@ jobs:
         run: |
           echo "e.g. your error happens here"
           echo "${{ toJson(github) }}"
+  information:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: run custom action
+        uses: ./.github/actions/deploy-s3-js
 
