@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
+    "start2": "node app.js",
     "prepare": "husky",
     "lint": "eslint --ext .jsx --fix src",
     "dev": "vite",

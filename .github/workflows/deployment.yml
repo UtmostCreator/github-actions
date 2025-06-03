@@ -75,7 +75,7 @@ jobs:
         id: prj-setup
         uses: ./.github/actions/setup-node-project
         with:
-          caching: 'true'
+          caching: 'false'
       - name: Print DateTime When it was cached
         run: echo "Cached at ${{ steps.prj-setup.outputs.executed-at }}"
       - name: Build Project
