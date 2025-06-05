@@ -6,7 +6,7 @@ on:
       - master
       - main
     tags-ignore:
-      - '**'         # ignore all tags
+      - "**" # ignore all tags
   workflow_dispatch:
 env:
   MONGODB_DB_NAME: test-db-name
@@ -16,18 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+        uses: actions/checkout@v4 # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
         with:
-          caching: 'true'
+          caching: "true"
       - name: Run Lint
         run: npm run lint
   test:
+    timeout-minutes: 3 # stops this job after 3 minutes if not complete
     # chosing env created within you GitHub UI repo(in the settings menu)
     environment: Testing
     # accessible within only this job
-    env: 
+    env:
       MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
       MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
       MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
@@ -35,11 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # 🔥 Required for local actions to be accessible!
+        uses: actions/checkout@v4 # 🔥 Required for local actions to be accessible!
       - name: Setup Project
         uses: ./.github/actions/setup-node-project
         with:
-          caching: 'true'
+          caching: "true"
         # npm start & - starts the server in the background, frees the shell.; w/o ampersand(&) shell will be stack in foreground
       - name: Run server & Wait Server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
@@ -59,32 +60,32 @@ jobs:
         run: npm run test:playwright
       - name: Print Info
         # secrets are hidden in such contexts
-        run: | 
+        run: |
           echo "MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}"
 
   build:
     needs: test
     runs-on: ubuntu-latest
     # results of this job using outputs:
-    outputs: 
+    outputs:
       script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # 🔥 Required again!
+        uses: actions/checkout@v4 # 🔥 Required again!
       - name: Setup Project
         id: prj-setup
         uses: ./.github/actions/setup-node-project
         with:
-          caching: 'false'
+          caching: "false"
       - name: Print DateTime When it was cached
         run: echo "Cached at ${{ steps.prj-setup.outputs.executed-at }}"
       - name: Build Project
         run: npm run build
       - name: Publish JS file name from build
-        id: publish  # used in $ {{ steps }} - mandatory
+        id: publish # used in $ {{ steps }} - mandatory
         # alternative syntax to 'script-file={}' is '::set-ouput name=script-file::{}'
         run: |
-          echo "script-file=$(find dist/assets/*.js -type f)" >> "$GITHUB_OUTPUT" 
+          echo "script-file=$(find dist/assets/*.js -type f)" >> "$GITHUB_OUTPUT"
         # finds and prints JS file's name e.g. output example: "./index.e16c65c9.js"
         # ';': Mandatory terminator for the -execdir clause. It tells find where the command ends.
         # $GITHUB_OUTPUT - managed by github
@@ -96,7 +97,7 @@ jobs:
           path: |
             dist
             package.json
-# package.json added just as an example
+  # package.json added just as an example
   deploy:
     needs: build
     uses: ./.github/workflows/reusable.yml
@@ -105,7 +106,7 @@ jobs:
       script-file: ${{ needs.build.outputs.script-file }}
       dist-name: dist-files
     # secrets:
-      # your-secret: ${{ secrets.GITHUB_TOKEN }}
+    # your-secret: ${{ secrets.GITHUB_TOKEN }}
   print-deploy-output-result:
     needs: [deploy]
     runs-on: ubuntu-latest
@@ -129,4 +130,3 @@ jobs:
   #       uses: actions/checkout@v4
   #     - name: run custom action
   #       uses: ./.github/actions/deploy-s3-js
-
