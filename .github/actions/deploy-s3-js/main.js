@@ -19,4 +19,6 @@ const exec = require('@actions/exec');
 
 
     core.notice('Hello from custom JS action');
+    const websiteUrl = `http://${bucket}.s3-website-${bucketRegion}.amazonaws.com`;
+    core.setOutput('website-url', websiteUrl); // ::set-output
 })();
