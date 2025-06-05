@@ -1,0 +1,23 @@
+name: AWS Deploy
+on: workflow_dispatch
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: ./dist
+      - name: Deploy S3
+        env:
+          # add environment in GH & set secrets
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        uses: ./.github/actions/deploy-s3-js
+        with:
+          bucket: gha-aws-hosting
+          dist-folder: ./dist
+          # bucket-region: us-east-2
